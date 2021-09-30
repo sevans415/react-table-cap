@@ -7,6 +7,11 @@ const tempCropArea = {
   height: 2000
 };
 
+interface Point {
+  x: number;
+  y: number;
+}
+
 const takeScreenshotAndPreview = () => {
   // @ts-ignore
   window.electronBridge.takeScreenshot(
@@ -23,38 +28,56 @@ const takeScreenshotAndPreview = () => {
 const App = () => {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [currMousePosition, setCurrMousePosition] =
-    useState<null | { x: number; y: number }>(null);
+    useState<null | Point>(null);
   const [downMousePosition, setDownMousePosition] =
-    useState<null | { x: number; y: number }>(null);
+    useState<null | Point>(null);
 
   const mouseDown = (e: MouseEvent) => {
-    setDownMousePosition({ x: e.screenX, y: e.screenY });
+    setDownMousePosition({ x: e.clientX, y: e.clientY });
     setIsMouseDown(true);
     console.log(e);
+    console.log("DOWN:", { x: e.clientX, y: e.clientY });
+    e.preventDefault();
   };
 
   const mouseUp = (e: MouseEvent) => {
-    console.log(e);
+    // console.log(e);
+    console.log("up:", { x: e.clientX, y: e.clientY });
     setIsMouseDown(false);
+    setCurrMousePosition(null);
+    setDownMousePosition(null);
     takeScreenshotAndPreview();
+    console.log("MOUSE UP");
+    console.log("down ", downMousePosition, "\n up: ", currMousePosition);
   };
 
   const mouseMove = (e: MouseEvent) => {
-    setCurrMousePosition({ x: e.screenX, y: e.screenY });
-    console.log(e);
+    if (isMouseDown) {
+      setCurrMousePosition({ x: e.clientX, y: e.clientY });
+    }
   };
+
+  const insideScreenshotStyles =
+    downMousePosition && currMousePosition
+      ? {
+          // TODO: need to adjust for if they go right -> left, or down -> up
+          top: downMousePosition.y,
+          left: downMousePosition.x,
+          width: Math.abs(currMousePosition.x - downMousePosition.x),
+          height: Math.abs(currMousePosition.y - downMousePosition.y)
+        }
+      : null;
 
   return (
     <div
       onMouseDown={mouseDown}
       onMouseUp={mouseUp}
       onMouseMove={isMouseDown ? mouseMove : undefined}
-      style={{ width: "100vw", height: "100vh" }}
+      className="app-body outside-screenshot"
     >
-      <h2>Hello from React!</h2>
-      <button id="trigger" onClick={takeScreenshotAndPreview}>
-        Take Screenshot
-      </button>
+      {downMousePosition && currMousePosition && (
+        <div className="inside-screenshot" style={insideScreenshotStyles}></div>
+      )}
 
       <img id="my-preview" style={{ width: "90%" }} />
     </div>

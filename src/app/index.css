@@ -1,0 +1,17 @@
+body {
+  margin: 0px;
+}
+
+.app-body {
+  width: 100vw;
+  height: 100vh;
+  cursor: crosshair;
+}
+
+.inside-screenshot {
+  position: absolute;
+  background-color: cornflowerblue;
+  opacity: 50%;
+  border-width: 5px;
+  border-color: chocolate;
+}

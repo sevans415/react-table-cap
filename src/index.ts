@@ -64,6 +64,6 @@ app.on("activate", () => {
  *
  * 1. figure out how to crop post images
  * 2. figure out how to create the cropping UI
- *      a. got state tracking mouse up & down, now just need to blur/draw over background and leave inside clear or vice/versa
- * 3. figure out how to send csv format to clipboard
+ * 3. crop image from cropping UI
+ * x. figure out how to send csv format to clipboard
  */
